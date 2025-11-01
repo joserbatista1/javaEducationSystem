@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try (Connection conn = ConnectionManager.getConnection("test", "jose", "123456")) {
+        try (Connection conn = ConnectionManager.getConnection("sql8805550", "sql8805550", "w7dmg5uMCA")) {
             // Note: This query should be case-sensitive based on your DB collation
             String sql = "SELECT contraseña,role FROM Users WHERE username = ?";
             try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
