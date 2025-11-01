@@ -8,7 +8,7 @@ public class ConnectionManager {
 
     public static Connection getConnection(String dbName, String user, String password) throws SQLException {
         // Updated URL for MySQL: uses 'jdbc:mysql' and port 3306
-        String url = "sql8.freesqldatabase.com" + dbName + "?serverTimezone=UTC";
+        String url = "sql8.freesqldatabase.com/3306" + dbName + "?serverTimezone=UTC";
 
         // NOTE: This now uses the hardcoded credentials that were previously in your code,
         // but now targets a MySQL instance.
