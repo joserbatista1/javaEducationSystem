@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Enroll New Teacher</title>
+    <style>
+        /* CSS Variables for Easy Theming */
+        :root {
+            --primary-color: #007bff; /* Button/Focus Color */
+            --primary-hover: #0056b3;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #343a40;
+            --border-color: #ced4da;
+            --focus-glow: rgba(0, 123, 255, 0.25);
+            --error-color: #dc3545;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            padding: 40px 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Container & Card Styling */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 24px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        /* Form Group Spacing */
+        form > div {
+            margin-bottom: 20px;
+        }
+
+        /* Labels */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        /* Input/Select Styling */
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            background-color: #fff;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--focus-glow);
+            outline: none;
+        }
+
+        /* Submission Button */
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+            transition: background-color 0.2s, transform 0.1s;
+            text-align: center;
+            display: block;
+            text-decoration: none; /* For the back button */
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            margin-bottom: 15px;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Enroll New Teacher</h2>
+
+    <form action="#" th:action="@{/teachers/save}" th:object="${teacher}" method="post">
+
+        <input type="hidden" th:field="*{id}">
+
+        <div>
+            <label for="name">First Name:</label>
+            <input type="text" id="name" th:field="*{name}" required>
+        </div>
+
+        <div>
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" th:field="*{lastName}" required>
+        </div>
+
+        <div hidden>
+            <label for="enrollmentDate">Enrollment Date:</label>
+            <input type="date" id="enrollmentDate" th:field="*{enrollmentDate}">
+        </div>
+
+        <div>
+            <label for="level">Teaching Level:</label>
+            <select id="level" th:field="*{levels}" required multiple>
+                <option value="">-- Select a Level --</option>
+                <option value="Primary">Primary</option>
+                <option value="Secondary">Secondary</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="grade">Assigned Grade:</label>
+            <select id="grade" th:field="*{grades}" required multiple>
+                <option value="">-- Select Grade --</option>
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="sections">Assigned Section(s):</label>
+            <select id="sections" th:field="*{sections}" required multiple>
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+                <option value="C">Section C</option>
+                <option value="D">Section D</option>
+            </select>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Submit Enrollment</button>
+
+    </form>
+
+    <a th:href="@{/teachers}" class="btn btn-secondary">Back to Teacher List</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics & Reports</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .main-content h1.h2 {
+    color: #004480; /* Match sidebar color for main titles */
+    font-weight: 600;
+}
+
+.main-content h2 {
+    color: #343a40;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    border-left: 4px solid #007bff; /* Small blue accent line */
+    padding-left: 10px;
+}
+
+/* =======================================
+   REPORT FILTER CARD STYLING
+   ======================================= */
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Subtle shadow for depth */
+    transition: all 0.3s;
+}
+
+.card-header {
+    background-color: #f8f9fa; /* Light background for the header */
+    font-weight: 600;
+    color: #343a40;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Filter Form Row Alignment */
+.form-row {
+    display: flex; /* Ensure the row alignment is controlled */
+    flex-wrap: wrap;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group .btn {
+    /* Adjust button alignment within the row */
+    margin-top: 25px;
+}
+/* Ensure the form controls look good */
+.form-control {
+    border-radius: 0.2rem;
+}
+
+/* =======================================
+   SUMMARY STATS CARDS STYLING
+   ======================================= */
+
+.row.mb-4 .card {
+    /* Remove default text-center and style inside card-body instead */
+    text-align: center;
+    border: none;
+}
+
+.card-body .h5.card-title {
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.85; /* Soften the title */
+    margin-bottom: 0.25rem;
+}
+
+.card-body .h3.card-text {
+    font-size: 2.25rem; /* Large, easy-to-read numbers */
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* Specific Card Color Overrides (Enhance Contrast) */
+.card.bg-info { background-color: #17a2b8 !important; }
+.card.bg-success { background-color: #28a745 !important; }
+.card.bg-warning { background-color: #ffc107 !important; color: #343a40 !important; }
+.card.bg-danger { background-color: #dc3545 !important; }
+
+/* =======================================
+   CHART CONTAINER STYLING
+   ======================================= */
+
+.chart-container {
+    height: 400px; /* Give the charts a fixed height for consistency */
+}
+
+/* Fix Chart.js Canvas inside the container */
+.chart-container .card-body {
+    height: calc(100% - 48px); /* Height of card-body minus card-header */
+    padding: 1rem;
+}
+
+#gradeDistributionChart,
+#performanceTimelineChart {
+    height: 100% !important; /* Ensure canvas fills the card-body height */
+    max-height: 100%;
+}
+
+/* =======================================
+   MOBILE ADJUSTMENTS (Further refinement)
+   ======================================= */
+
+@media (max-width: 992px) {
+    /* Stack the summary cards vertically on medium and small screens */
+    .row.mb-4 .col-md-3 {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content h2 {
+        font-size: 1.3rem;
+    }
+    .card-body .h3.card-text {
+        font-size: 1.75rem;
+    }
+    /* Reduce height of charts on mobile */
+    .chart-container {
+        height: 300px;
+    }
+}
+        body {
+                   margin: 0;
+                   padding: 0;
+               }
+
+               /* Sidebar - Desktop */
+               .sidebar {
+                   height: 100vh;
+                   background-color: #004480;
+                   color: white;
+                   padding: 20px 15px;
+                   position: fixed;
+                   left: 0;
+                   top: 0;
+                   z-index: 1000;
+                   width: 200px;
+                   overflow-y: auto;
+               }
+
+               .sidebar h5 {
+                   color: white;
+                   margin-bottom: 1.5rem;
+                   font-size: 1.1rem;
+               }
+
+               .sidebar .nav {
+                   flex-direction: column;
+                   display: flex;
+               }
+
+               .sidebar .nav-link {
+                   color: #adb5bd;
+                   padding: 0.75rem 1rem;
+                   border-radius: 0.25rem;
+                   transition: all 0.3s;
+               }
+
+               .sidebar .nav-link:hover,
+               .sidebar .nav-link.active {
+                   background-color: #495057;
+                   color: white;
+               }
+
+               .logout-button {
+                   background-color: #dc3545;
+                   border: 1px solid #dc3545;
+                   color: white;
+                   padding: 0.75rem 1rem;
+                   margin-top: 1rem;
+                   width: 100%;
+                   text-align: center;
+                   border-radius: 0.25rem;
+                   cursor: pointer;
+                   transition: all 0.3s;
+               }
+
+               .logout-button:hover {
+                   background-color: #c82333;
+                   border-color: #bd2130;
+               }
+
+               /* Main content - Desktop */
+               .main-content {
+                   margin-left: 200px;
+                   padding: 20px;
+                   min-height: 100vh;
+                   width: calc(100% - 200px);
+               }
+
+               /* Cards */
+               .card {
+                   border-radius: 0.5rem;
+                   border: none;
+               }
+
+               .card-body h5 {
+                   font-size: 0.9rem;
+                   margin-bottom: 0.5rem;
+               }
+
+               /* Table */
+               .table-responsive {
+                   margin-top: 1rem;
+               }
+
+               /* Chart */
+               #gradesChart {
+                   max-height: 300px;
+                   margin-top: 1rem;
+               }
+
+               .text-danger {
+                   font-size: 0.875em;
+               }
+
+               .form-row > [class*="col-"] {
+                   padding-right: 15px;
+                   padding-left: 15px;
+               }
+
+               /* Mobile Styles - Horizontal navbar always */
+               @media (max-width: 768px) {
+                   /* Make sidebar compact and horizontal */
+                   .sidebar {
+                       position: relative;
+                       height: auto;
+                       width: 100%;
+                       padding: 8px;
+                   }
+
+                   .sidebar h5 {
+                       display: none; /* Hide title on mobile to save space */
+                   }
+
+                   /* Horizontal scrollable menu - always in one line */
+                   .sidebar .nav {
+                       flex-direction: row;
+                       flex-wrap: nowrap;
+                       overflow-x: auto;
+                       -webkit-overflow-scrolling: touch;
+                       padding: 5px 0;
+                       gap: 5px;
+                       margin-bottom: 8px;
+                       scrollbar-width: thin;
+                   }
+
+                   /* Hide scrollbar for cleaner look */
+                   .sidebar .nav::-webkit-scrollbar {
+                       height: 4px;
+                   }
+
+                   .sidebar .nav::-webkit-scrollbar-track {
+                       background: #495057;
+                   }
+
+                   .sidebar .nav::-webkit-scrollbar-thumb {
+                       background: #6c757d;
+                       border-radius: 2px;
+                   }
+
+                   .sidebar .nav-item {
+                       flex: 0 0 auto;
+                   }
+
+                   .sidebar .nav-link {
+                       padding: 0.5rem 1rem;
+                       font-size: 0.8rem;
+                       white-space: nowrap;
+                   }
+
+                   /* Logout button inline with nav items */
+                   .sidebar form {
+                       display: inline-block;
+                       margin: 0;
+                   }
+
+                   .logout-button {
+                       padding: 0.5rem 1rem;
+                       font-size: 0.8rem;
+                       margin: 0;
+                       white-space: nowrap;
+                       width: auto;
+                   }
+
+                   .main-content {
+                       margin-left: 0;
+                       padding: 15px;
+                       width: 100%;
+                   }
+
+                   .main-content h1 {
+                       font-size: 1.25rem;
+                   }
+
+                   .main-content h2 {
+                       font-size: 1.1rem;
+                       margin-top: 1rem;
+                   }
+
+                   .card-body .h1 {
+                       font-size: 2rem;
+                   }
+
+                   .border-bottom {
+                       padding-top: 0.5rem !important;
+                       padding-bottom: 0.5rem !important;
+                       margin-bottom: 1rem !important;
+                   }
+               }
+
+               /* Extra small screens - still horizontal */
+               @media (max-width: 576px) {
+                   .sidebar .nav-link {
+                       padding: 0.4rem 0.8rem;
+                       font-size: 0.75rem;
+                   }
+
+                   .logout-button {
+                       font-size: 0.75rem;
+                       padding: 0.4rem 0.8rem;
+                   }
+
+                   .main-content h1 {
+                       font-size: 1.1rem;
+                   }
+
+                   .card-body h5 {
+                       font-size: 0.8rem;
+                   }
+
+                   .card-body .h1 {
+                       font-size: 1.5rem;
+                   }
+               }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+
+        <nav class="sidebar">
+            <h5>Grade Manager</h5>
+            <div style="display: flex; align-items: center; width: 100%;">
+                <ul class="nav" style="margin-bottom: 0;">
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/main}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/subjects}">Subject List</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/students}">Student Directory</a></li>
+                    <li class="nav-item"><a class="nav-link active text-white" th:href="@{/reports}">Analytics & Reports</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/teachers}">Teachers</a></li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" style="margin: 0;">
+                            <button type="submit" class="logout-button">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Academic Analytics & Reporting</h1>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Report Filters</div>
+                <div class="card-body">
+                    <form th:action="@{/reports}" method="get" class="form-row align-items-end">
+                        <div class="form-group col-md-3">
+                            <label for="subjectFilter">Subject</label>
+                            <select id="subjectFilter" name="subjectId" class="form-control">
+                                <option value="">-- All Subjects --</option>
+                                <option th:each="subject : ${allSubjects}"
+                                        th:value="${subject.id}"
+                                        th:text="${subject.name}"
+                                        th:selected="${subject.id == currentSubjectId}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="termFilter">Academic Term</label>
+                            <select id="termFilter" name="term" class="form-control">
+                                <option value="">-- All Terms --</option>
+                                <option th:each="term : ${availableTerms}"
+                                        th:value="${term}"
+                                        th:text="${term}"
+                                        th:selected="${term == currentTerm}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="minGpaFilter">Min GPA</label>
+                            <input type="number" id="minGpaFilter" name="minGpa" class="form-control" th:value="${minGpa}" step="0.1">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a th:href="@{/reports}" class="btn btn-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <h2>Filtered Summary</h2>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center bg-info text-white"><div class="card-body">
+                        <p class="h5 card-title">Total Enrollment</p>
+                        <p class="h3 card-text" th:text="${summaryStats.totalStudents}">95</p>
+                    </div></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center bg-success text-white"><div class="card-body">
+                        <p class="h5 card-title">Avg. Grade</p>
+                        <p class="h3 card-text" th:text="${summaryStats.averageGrade}">78.4%</p>
+                    </div></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center bg-warning text-dark"><div class="card-body">
+                        <p class="h5 card-title">Passing Rate</p>
+                        <p class="h3 card-text" th:text="${summaryStats.passingRate} + '%'">85%</p>
+                    </div></div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center bg-danger text-white"><div class="card-body">
+                        <p class="h5 card-title">Failing Students</p>
+                        <p class="h3 card-text" th:text="${summaryStats.failingStudents}">14</p>
+                    </div></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card chart-container">
+                        <div class="card-header">Grade Distribution (A, B, C, D, F)</div>
+                        <div class="card-body"><canvas id="gradeDistributionChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card chart-container">
+                        <div class="card-header">Average Performance Over Time</div>
+                        <div class="card-body"><canvas id="performanceTimelineChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // --- Chart 1: Grade Distribution ---
+    const gradeData = [[${gradeDistributionChartData}]]; // e.g., {'A': 20, 'B': 35, 'C': 30, 'D': 10, 'F': 5}
+
+    if (gradeData && Object.keys(gradeData).length > 0) {
+        new Chart(document.getElementById('gradeDistributionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(gradeData),
+                datasets: [{
+                    data: Object.values(gradeData),
+                    backgroundColor: ['#28a745', '#007bff', '#ffc107', '#fd7e14', '#dc3545'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                title: { display: true, text: 'Grade Count' }
+            }
+        });
+    }
+
+    // --- Chart 2: Performance Over Time ---
+    const timelineData = [[${performanceTimelineChartData}]]; // e.g., {labels: ['Fall 2023', 'Spring 2024'], data: [75.2, 81.5]}
+
+    if (timelineData && timelineData.labels && timelineData.data) {
+        new Chart(document.getElementById('performanceTimelineChart'), {
+            type: 'line',
+            data: {
+                labels: timelineData.labels,
+                datasets: [{
+                    label: 'Average Score (%)',
+                    data: timelineData.data,
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderColor: '#007bff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{ ticks: { beginAtZero: false, suggestedMin: 60 } }]
+                }
+            }
+        });
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

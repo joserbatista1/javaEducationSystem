@@ -1,0 +1,248 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Student Directory</title>-->
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+<!--    <link rel="stylesheet" th:href="@{/css/style.css}">-->
+<!--    <style>-->
+<!--        .sidebar {-->
+<!--            height: 100vh;-->
+<!--            background-color:purple;-->
+<!--            color: white;-->
+<!--            padding-top: 20px;-->
+<!--            position: fixed;-->
+<!--            left: 0;-->
+<!--            top: 0;-->
+<!--            z-index: 1000;-->
+<!--        }-->
+<!--        .main-content {-->
+<!--            margin-left: 180px;-->
+<!--            padding: 20px;-->
+<!--        }-->
+<!--        @media (min-width: 768px) {-->
+<!--            .sidebar { width: 180px; }-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container-fluid">-->
+<!--    <div class="row">-->
+
+<!--        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block sidebar">-->
+<!--            <div class="sidebar-sticky">-->
+<!--                <h5 class="text-white mb-4">Grade Manager</h5>-->
+<!--                <ul class="nav flex-column">-->
+<!--                    <li class="nav-item"><a class="nav-link active text-white" th:href="@{/main}">Home</a></li>-->
+<!--                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/dashboard}">Dashboard</a></li>-->
+<!--                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/subjects}">Subject List</a></li>-->
+<!--                    <li class="nav-item"><a class="nav-link active text-white" th:href="@{/students}">Student Directory</a></li>-->
+<!--                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/reports}">Analytics & Reports</a></li>-->
+<!--                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/teachers}">Teachers</a></li>-->
+<!--                    <form th:action="@{/logout}" method="post">-->
+<!--                        <button type="submit" class="logout-button">-->
+<!--                            Logout-->
+<!--                        </button>-->
+<!--                    </form>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </nav>-->
+
+<!--        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">-->
+<!--            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">-->
+<!--                <h1 class="h2">Teachers Directory</h1>-->
+<!--                <div class="btn-toolbar mb-2 mb-md-0">-->
+<!--                    <a th:href="@{/teachers/new}" class="btn btn-sm btn-primary">-->
+<!--                        <span data-feather="plus"></span> Enroll New Teacher-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <form class="form-inline mb-4" th:action="@{/teachers}" method="get">-->
+<!--                <input type="text" name="keyword" class="form-control mr-sm-2" placeholder="Search by name or ID" th:value="${keyword}">-->
+<!--                <button type="submit" class="btn btn-outline-primary mr-2">Search</button>-->
+<!--                <a th:href="@{/teachers}" class="btn btn-outline-secondary">Reset</a>-->
+<!--            </form>-->
+
+<!--            <div class="table-responsive">-->
+<!--                <table class="table table-striped table-hover">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>Teacher ID</th>-->
+<!--                        <th>Name</th>-->
+<!--                        <th>Lastname</th>-->
+<!--                        <th>Enrollment Date</th>-->
+<!--                        <th>Grades</th>-->
+<!--                        <th>Sections</th>-->
+<!--                        <th>Subjects</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                    <tr th:each="teacher : ${teachers}">-->
+<!--                        <td th:text="${teacher.teacherId}">1001</td>-->
+<!--                        <td th:text="${teacher.Name}">Jane Doe</td>-->
+<!--                        <td th:text="${teacher.Lastname}">jane.doe@school.edu</td>-->
+<!--                        <td th:text="${teacher.enrollmentDate}">2023-09-01</td>-->
+<!--                        <td th:text="$teacher.grades}"-->
+<!--                            th:class="${student.gpa < 2.0} ? 'text-danger font-weight-bold' : ''">3.50</td>-->
+<!--                        <td>-->
+<!--                            <a th:href="@{/students/{id}(id=${student.id})}" class="btn btn-sm btn-info mr-1">View Profile</a>-->
+<!--                            <a th:href="@{/students/delete/{id}(id=${student.id})}"-->
+<!--                               onclick="return confirm('WARNING: Deleting a student is irreversible. Continue?');"-->
+<!--                               class="btn btn-sm btn-danger">Delete</a>-->
+<!--                        </td>-->
+<!--                    </tr>-->
+
+<!--                    <tr th:if="${#lists.isEmpty(teachers)}">-->
+<!--                        <td colspan="6" class="text-center text-muted">No students found matching your criteria.</td>-->
+<!--                    </tr>-->
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--            </div>-->
+
+<!--            <nav th:if="${totalPages > 1}">-->
+<!--                <ul class="pagination">-->
+<!--                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">-->
+<!--                        <a class="page-link" th:href="@{/students(page=${currentPage - 1}, keyword=${keyword})}">Previous</a>-->
+<!--                    </li>-->
+<!--                    <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">-->
+<!--                        <a class="page-link" th:href="@{/students(page=${i}, keyword=${keyword})}" th:text="${i}">1</a>-->
+<!--                    </li>-->
+<!--                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">-->
+<!--                        <a class="page-link" th:href="@{/students(page=${currentPage + 1}, keyword=${keyword})}">Next</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </nav>-->
+
+<!--        </main>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Directory</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+
+        <nav class="sidebar">
+            <h5>Grade Manager</h5>
+            <div style="display: flex; align-items: center; width: 100%;">
+                <ul class="nav" style="margin-bottom: 0;">
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/main}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/subjects}">Subject List</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/students}">Student Directory</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/reports}">Analytics & Reports</a></li>
+                    <li class="nav-item"><a class="nav-link active text-white" th:href="@{/teachers}">Teachers</a></li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" style="margin: 0;">
+                            <button type="submit" class="logout-button">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Teacher Directory</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a th:href="@{/teachers/new}" class="btn btn-sm btn-primary">
+                        <span data-feather="plus"></span> Enroll New Teacher
+                    </a>
+                </div>
+            </div>
+
+<!--            <form class="form-inline mb-4" th:action="@{/teachers}" method="get">-->
+<!--                <input type="text" name="keyword" class="form-control mr-sm-2" placeholder="Search by name or ID" th:value="${keyword}">-->
+<!--                <button type="submit" class="btn btn-outline-primary mr-2">Search</button>-->
+<!--                <a th:href="@{/teachers}" class="btn btn-outline-secondary">Reset</a>-->
+<!--            </form>-->
+
+            <div class="table-responsive">
+                <table id="teachersTable" class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Level</th>
+                        <th>Grade</th>
+                        <th>Sections</th>
+                        <th>Enrollment Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="teacher : ${teachers}">
+                        <td th:text="${teacher.id}">1001</td>
+                        <td th:text="${teacher.name}">Jane</td>
+                        <td th:text="${teacher.lastName}">Doe</td>
+                        <td>
+                            <span class="sections-list"
+                                  th:text="${#strings.listJoin(teacher.levels, ', ')}">Primary,Secondary</span>
+
+                        </td>
+                        <td>
+                            <span class="sections-list"
+                                  th:text="${#strings.listJoin(teacher.grades, ', ')}">1,2,3</span>
+
+                        </td>
+                        <td>
+                            <span class="sections-list"
+                                  th:text="${#strings.listJoin(teacher.sections, ', ')}">A, B, C</span>
+
+                        </td>
+
+                        <td th:text="${#temporals.format(teacher.enrollmentDate, 'yyyy-MM-dd')}">2023-09-01</td>
+
+                        <td>
+                            <a th:href="@{/teachers/edit/{id}(id=${teacher.id})}" class="btn btn-sm btn-info mr-1">Edit</a>
+
+                            <a th:href="@{/teachers/delete/{id}(id=${teacher.id})}"
+                               onclick="return confirm('WARNING: Deleting a teacher is irreversible. Continue?');"
+                               class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+        </main>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css" />
+<script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#teachersTable').DataTable();
+    });
+</script>
+<script>
+    function confirmDelete(formElement) {
+        // Safely retrieves the student name from the data-student-name attribute
+        const studentName = formElement.getAttribute('data-student-name');
+
+        // Return true/false from the confirm dialog
+        return confirm('WARNING: Deleting student ' + studentName + ' is irreversible. Continue?');
+    }
+</script>
+</body>
+</html>
