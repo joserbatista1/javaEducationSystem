@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Course</title>
+    <style>
+        .container { width: 50%; margin: auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; }
+        input[type="text"] { width: 100%; padding: 8px; }
+        .error { color: red; font-size: 0.8em; }
+        .btn { padding: 10px 15px; background-color: #28a745; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Create New Course</h2>
+    <hr>
+    <form th:action="@{/courses/saveCourse}" th:object="${course}" method="POST">
+
+        <div class="form-group">
+            <label>Course Name:</label>
+            <input type="text" th:field="*{name}" placeholder="Enter Course Name" required>
+            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></p>
+        </div>
+
+        <div class="form-group">
+            <label>Description:</label>
+            <input type="text" th:field="*{description}" placeholder="Enter Description">
+        </div>
+
+        <button type="submit" class="btn">Save Course</button>
+    </form>
+    <hr>
+    <a th:href="@{/courses}">Back to Course List</a>
+</div>
+</body>
+</html>

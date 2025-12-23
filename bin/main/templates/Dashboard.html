@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Management Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sidebar - Desktop */
+        .sidebar {
+            height: 100vh;
+            background-color: #004480;
+            color: white;
+            padding: 20px 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            width: 200px;
+            overflow-y: auto;
+        }
+
+        .sidebar h5 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .sidebar .nav {
+            flex-direction: column;
+            display: flex;
+        }
+
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: #495057;
+            color: white;
+        }
+
+        .logout-button {
+            background-color: #dc3545;
+            border: 1px solid #dc3545;
+            color: white;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            width: 100%;
+            text-align: center;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        /* Main content - Desktop */
+        .main-content {
+            margin-left: 200px;
+            padding: 20px;
+            min-height: 100vh;
+            width: calc(100% - 200px);
+        }
+
+        /* Cards */
+        .card {
+            border-radius: 0.5rem;
+            border: none;
+        }
+
+        .card-body h5 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Table */
+        .table-responsive {
+            margin-top: 1rem;
+        }
+
+        /* Chart */
+        #gradesChart {
+            max-height: 300px;
+            margin-top: 1rem;
+        }
+
+        .text-danger {
+            font-size: 0.875em;
+        }
+
+        .form-row > [class*="col-"] {
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        /* Mobile Styles - Horizontal navbar always */
+        @media (max-width: 768px) {
+            /* Make sidebar compact and horizontal */
+            .sidebar {
+                position: relative;
+                height: auto;
+                width: 100%;
+                padding: 8px;
+            }
+
+            .sidebar h5 {
+                display: none; /* Hide title on mobile to save space */
+            }
+
+            /* Horizontal scrollable menu - always in one line */
+            .sidebar .nav {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding: 5px 0;
+                gap: 5px;
+                margin-bottom: 8px;
+                scrollbar-width: thin;
+            }
+
+            /* Hide scrollbar for cleaner look */
+            .sidebar .nav::-webkit-scrollbar {
+                height: 4px;
+            }
+
+            .sidebar .nav::-webkit-scrollbar-track {
+                background: #495057;
+            }
+
+            .sidebar .nav::-webkit-scrollbar-thumb {
+                background: #6c757d;
+                border-radius: 2px;
+            }
+
+            .sidebar .nav-item {
+                flex: 0 0 auto;
+            }
+
+            .sidebar .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+
+            /* Logout button inline with nav items */
+            .sidebar form {
+                display: inline-block;
+                margin: 0;
+            }
+
+            .logout-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+                margin: 0;
+                white-space: nowrap;
+                width: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+                width: 100%;
+            }
+
+            .main-content h1 {
+                font-size: 1.25rem;
+            }
+
+            .main-content h2 {
+                font-size: 1.1rem;
+                margin-top: 1rem;
+            }
+
+            .card-body .h1 {
+                font-size: 2rem;
+            }
+
+            .border-bottom {
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+                margin-bottom: 1rem !important;
+            }
+        }
+
+        /* Extra small screens - still horizontal */
+        @media (max-width: 576px) {
+            .sidebar .nav-link {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+
+            .logout-button {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .main-content h1 {
+                font-size: 1.1rem;
+            }
+
+            .card-body h5 {
+                font-size: 0.8rem;
+            }
+
+            .card-body .h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h5>Grade Manager</h5>
+            <div style="display: flex; align-items: center; width: 100%;">
+                <ul class="nav" style="margin-bottom: 0;">
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/main}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active text-white" th:href="@{/dashboard}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/subjects}">Subject List</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/students}">Student Directory</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/reports}">Analytics & Reports</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" th:href="@{/teachers}">Teachers</a></li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" style="margin: 0;">
+                            <button type="submit" class="logout-button">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2" th:text="${dashboardTitle}">Academic Administrator Dashboard</h1>
+            </div>
+
+            <h2>Overview</h2>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Students</h5>
+                            <p class="card-text h1" th:text="${totalStudents}">150</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">School GPA</h5>
+                            <p class="card-text h1" th:text="${averageGPA}">3.25</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">Active Subjects</h5>
+                            <p class="card-text h1" th:text="${totalSubjects}">18</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="mt-4">Grades Distribution</h2>
+            <canvas id="gradesChart" width="400" height="150"></canvas>
+
+            <h2 class="mt-4">Critical Grade Alerts</h2>
+            <p class="text-danger">Students with a current average grade below 60% in any subject.</p>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Student Name</th>
+                        <th>Subject</th>
+                        <th>Current Grade</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="alert : ${lowGradeAlerts}">
+                        <td th:text="${alert.studentId}">1001</td>
+                        <td th:text="${alert.studentName}">Jane Doe</td>
+                        <td th:text="${alert.subjectName}">Calculus II</td>
+                        <td th:text="${alert.grade}" class="font-weight-bold text-danger">58.2</td>
+                        <td><a href="#" th:href="@{/students/{id}(id=${alert.studentId})}">View Profile</a></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(lowGradeAlerts)}">
+                        <td colspan="5" class="text-center text-success">🎉 No critical grade alerts found!</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Data map from Spring: {'A': 30, 'B': 50, 'C': 40, ...}
+    const gradeCounts = [[${gradeDistribution}]] || {};
+
+    // Prepare data for Chart.js
+    const labels = Object.keys(gradeCounts);
+    const data = Object.values(gradeCounts);
+
+    if (labels.length > 0) {
+        new Chart(document.getElementById('gradesChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '# of Students per Grade',
+                    data: data,
+                    backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    yAxes: [{
+                        ticks: { beginAtZero: true }
+                    }]
+                }
+            }
+        });
+    }
+    /*]]>*/
+</script>
+</body>
+</html>
