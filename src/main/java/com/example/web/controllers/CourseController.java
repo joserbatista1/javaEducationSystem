@@ -34,10 +34,10 @@ public class CourseController {
         return "new_course"; // Looks for new_course.html
     }
 
-//    // Save course to database
-//    @PostMapping("/saveCourse")
-//    public String saveCourse(@ModelAttribute("course") Course course) {
-//        courseService.save(course);
-//        return "redirect:/courses"; // Redirects to the list view
-//    }
+    // Save course to database
+    @PostMapping("/saveCourse")
+    public String saveCourse(@ModelAttribute("course") Course course) {
+        courseService.createCourse(course);
+        return "redirect:/courses"; // Redirects to the list view
+    }
 }

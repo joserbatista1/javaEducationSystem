@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
-@Where(clause = "is_active = true") // Example soft-delete clause
+@Where(clause = "is_current = true") // Example soft-delete clause
 @Table(name = "academic_year")
 public class AcademicYear {
 

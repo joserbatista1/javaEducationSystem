@@ -316,21 +316,6 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="type">Type of subject</label>
-                        <select id="type"
-                                th:field="*{type}"
-                                class="form-control">
-                            <option th:each="type:${availableTypes}"
-                                    th:value="${type}"
-                                    th:text="${type}">Technical</option>
-                        </select>
-                        <div class="text-danger" th:if="${#fields.hasErrors('teachers')}" th:errors="*{teachers}">Instructor Error</div>
-                        <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple instructors.</small>
-                    </div>
-                </div>
-
-                <div class="form-row">
                     <div class="form-group col-md-12">
                         <label for="description">Description</label>
                         <textarea class="form-control"

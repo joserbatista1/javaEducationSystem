@@ -181,7 +181,7 @@ public class SubjectController {
 
         // Pass the list of available Teacher entities for the dropdown
         model.addAttribute("availableInstructors", teacherService.getAllTeachers());
-
+        model.addAttribute("availableTypes", List.of("TECHNICAL", "NONTECHNICAL"));
         return "subjects_new";
     }
 

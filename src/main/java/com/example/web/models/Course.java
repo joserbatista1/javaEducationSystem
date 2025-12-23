@@ -11,10 +11,16 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
     @NotBlank(message = "Course name is required")
     private String name;
 
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AcademicYearId", nullable = false)
+    private AcademicYear academicYear; // YearID (FK)
 
     // Default constructor for JPA
     public Course() {}
